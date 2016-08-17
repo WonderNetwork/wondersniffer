@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<ruleset name="WonderNetwork">
+ <description>The WonderNetwork coding standard.</description>
+ <arg name="tab-width" value="4"/>
+ <!-- Include the whole PSR-2 standard: http://www.php-fig.org/psr/psr-2/ -->
+ <rule ref="PSR2">
+     <!-- everything excluded here is part of the PSR2 definition, but we don't
+          want it -->
+
+     <!-- We want the K&R rule below, and this interferes with that -->
+     <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine" />
+
+     <!-- Requires class names start with capital letters. Ours don't and we
+          don't care. -->
+     <exclude name="Squiz.Classes.ValidClassName" />
+
+     <!-- Requires braces be on the next line from the class declaration. We
+          want them on the same line. -->
+     <exclude name="PSR1.Classes.ClassDeclaration" />
+     <exclude name="PSR2.Classes.ClassDeclaration" />
+
+     <!-- Forbids empty `catch` statements in try/catch blocks. We don't want
+          empty catch statements either, but we'll accept them if there's a
+          comment explaining why the statement is empty. We handle that case
+          later. -->
+     <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH" />
+ </rule>
+
+    <!-- Require functions braces be on the same line and multi-line arguments
+         are aligned properly:
+
+        function thing() {
+
+        function stuff(
+            array $b,
+            $c,
+            callable $z
+        ) {
+    -->
+    <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+
+    <!-- Forbids empty statements:
+        if (thing) {
+            doStuff();
+        } else {
+            // WTF IS THIS
+        }
+    -->
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+
+    <!-- Requires a space after typecasting, e.g. `(int) "4"` -->
+    <rule ref="Generic.Formatting.SpaceAfterCast"/>
+
+    <!-- Requires PHP5-style class constructors:
+        class MyClass {
+            public function MyClass()     // bad
+            public function __construct() // good
+        }
+    -->
+    <rule ref="Generic.NamingConventions.ConstructorName"/>
+
+    <!-- Requires camel-caps naming for functions -->
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <properties>
+            <!-- allow things like getMyID zomg two caps next to each other! -->
+            <property name="strict" value="false"/>
+        </properties>
+    </rule>
+
+    <!-- Forbids pointless string concatenations, e.g. "foo"."bar" -->
+    <rule ref="Generic.Strings.UnnecessaryStringConcat"/>
+
+    <!-- Requires short array syntax, i.e. [] instead of array() -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+    <!-- Requires that include is only used in conditional situations, and
+         require is used elsewhere. Also forbids parenthesis around the file
+         being included, because require/include aren't functions. -->
+    <rule ref="PEAR.Files.IncludingFile"/>
+
+    <!-- Forbids Perl-style comments, e.g. # this is a comment -->
+    <rule ref="PEAR.Commenting.InlineComment"/>
+
+    <!-- Requires multi-line if conditions to be indented correctly. Also
+         requires each conditional line to start with a boolean operator, to
+         improve readability:
+
+         if (this
+            && that
+            || stuff
+        ) {
+            doStuff();
+        }
+    -->
+    <rule ref="PEAR.ControlStructures.MultiLineCondition"/>
+
+    <!-- Forbids whitespace in typecasts, e.g. ( int ) -->
+    <rule ref="Squiz.WhiteSpace.CastSpacing"/>
+
+    <!-- Forbids whitespace before semicolons, e.g. doStuff() ; -->
+    <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+
+    <!-- Requires whitespace around logical operators, e.g. (this && that) -->
+    <rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
+
+    <!-- Forbids spacing around the concatenation operator, e.g. $this . $that -->
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <!-- Allows newlines around concat operators -->
+            <property name="ignoreNewlines" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- Requires empty catch blocks to have a comment explaining why they're
+         empty -->
+    <rule ref="Squiz.Commenting.EmptyCatchComment"/>
+
+    <!-- this would force camel caps for variables, but we can't use it because
+        we pull some variable names directly from the database, which uses
+        underscores. Drat.
+    <rule ref="Zend.NamingConventions.ValidVariableName"/>
+    -->
+</ruleset>
