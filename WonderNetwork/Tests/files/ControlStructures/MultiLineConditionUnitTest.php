@@ -137,3 +137,25 @@ if ($IPP->errorCode() == 401
 ) {
     return false;
 }
+
+while (true) {
+    echo 'bar';
+}
+
+while (true
+    && false
+) {
+    echo 'bar';
+}
+
+while (true
+       && false
+) {
+    echo 'bar';
+}
+
+while (true &&
+    false
+    || true) {
+    echo 'bar';
+}

@@ -24,3 +24,9 @@
      |       | be on a new line
  129 | ERROR | Each line in a multi-line IF statement must begin with
      |       | a boolean operator
+ 152 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 7
+ 158 | ERROR | Each line in a multi-line IF statement must begin with
+     |       | a boolean operator
+ 159 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
