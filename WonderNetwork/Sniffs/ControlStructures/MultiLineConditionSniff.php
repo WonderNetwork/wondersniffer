@@ -61,19 +61,6 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
 
         $openBracket    = $tokens[$stackPtr]['parenthesis_opener'];
         $closeBracket   = $tokens[$stackPtr]['parenthesis_closer'];
-        $spaceAfterOpen = 0;
-        if ($tokens[($openBracket + 1)]['code'] === T_WHITESPACE) {
-            if (strpos($tokens[($openBracket + 1)]['content'], $phpcsFile->eolChar) !== false) {
-                $spaceAfterOpen = 'newline';
-            } else {
-                $spaceAfterOpen = strlen($tokens[($openBracket + 1)]['content']);
-            }
-        }
-
-        if ($spaceAfterOpen !== 0) {
-            $error = 'First condition of a multi-line IF statement must directly follow the opening parenthesis';
-            $phpcsFile->addError($error, ($openBracket + 1), 'SpacingAfterOpenBrace');
-        }
 
         // We need to work out how far indented the if statement
         // itself is, so we can work out how far to indent conditions.
@@ -87,6 +74,23 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
 
         if ($i >= 0 && $tokens[$i]['code'] === T_WHITESPACE) {
             $statementIndent = strlen($tokens[$i]['content']);
+        }
+
+        $this->processParens($phpcsFile, $tokens, $openBracket, $statementIndent);
+
+        /*
+        $spaceAfterOpen = 0;
+        if ($tokens[($openBracket + 1)]['code'] === T_WHITESPACE) {
+            if (strpos($tokens[($openBracket + 1)]['content'], $phpcsFile->eolChar) !== false) {
+                $spaceAfterOpen = 'newline';
+            } else {
+                $spaceAfterOpen = strlen($tokens[($openBracket + 1)]['content']);
+            }
+        }
+
+        if ($spaceAfterOpen !== 0) {
+            $error = 'First condition of a multi-line IF statement must directly follow the opening parenthesis';
+            $phpcsFile->addError($error, ($openBracket + 1), 'SpacingAfterOpenBrace');
         }
 
         // Each line between the parenthesis should be indented 4 spaces
@@ -155,6 +159,7 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
                 }
             }
         }//end for
+        */
 
         // From here on, we are checking the spacing of the opening and closing
         // braces. If this IF statement does not use braces, we end here.
@@ -202,5 +207,101 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
 
     }//end process()
 
+    /**
+     * @param PHP_CodeSniffer_File $phpcs
+     * @param array                $tokens
+     * @param int                  $open
+     * @param int                  $indent
+     */
+    public function processParens(PHP_CodeSniffer_File $phpcs, array $tokens, $open, $indent) {
+        $stackPtr = $open;
+        $close = (int) $tokens[$stackPtr]['parenthesis_closer'];
+
+        $spaceAfterOpen = 0;
+        if ($tokens[($open + 1)]['code'] === T_WHITESPACE) {
+            if (strpos($tokens[($open + 1)]['content'], $phpcs->eolChar) !== false) {
+                $spaceAfterOpen = 'newline';
+            } else {
+                $spaceAfterOpen = strlen($tokens[($open + 1)]['content']);
+            }
+        }
+        if ($spaceAfterOpen !== 0) {
+            $error = 'First condition of a multi-line IF statement must directly follow the opening parenthesis';
+            $phpcs->addError($error, ($open + 1), 'SpacingAfterOpenBrace');
+        }
+
+        // Each line between the parenthesis should be indented 4 spaces
+        // and start with an operator, unless the line is inside a
+        // function call, in which case it is ignored.
+        $prevLine = $tokens[$open]['line'];
+        for ($i = ($open + 1); $i < $close; $i++) {
+            if ($tokens[$i]['code'] === T_OPEN_PARENTHESIS) {
+                $this->processParens($phpcs, $tokens, $i, $indent + $this->indent);
+                $i = $tokens[$i]['parenthesis_closer'] + 1;
+                continue;
+            }
+
+            if ($tokens[$i]['line'] !== $prevLine) {
+                if ($tokens[$i]['line'] === $tokens[$close]['line']) {
+                    $next = $phpcs->findNext(T_WHITESPACE, $i, null, true);
+                    if ($next !== $close) {
+                        // Closing bracket is on the same line as a condition.
+                        $error = 'Closing parenthesis of a multi-line IF statement must be on a new line';
+                        $phpcs->addError($error, $close, 'CloseBracketNewLine');
+                        $expectedIndent = ($indent + $this->indent);
+                    } else {
+                        // Closing brace needs to be indented to the same level
+                        // as the statement.
+                        $expectedIndent = $indent;
+                    }//end if
+                } else {
+                    $expectedIndent = ($indent + $this->indent);
+                }//end if
+
+                if ($tokens[$i]['code'] === T_COMMENT) {
+                    $prevLine = $tokens[$i]['line'];
+                    continue;
+                }
+
+                // We changed lines, so this should be a whitespace indent token.
+                if ($tokens[$i]['code'] !== T_WHITESPACE) {
+                    $foundIndent = 0;
+                } else {
+                    $foundIndent = strlen($tokens[$i]['content']);
+                }
+
+                if ($expectedIndent !== $foundIndent) {
+                    $error = 'Multi-line IF statement not indented correctly; expected %s spaces but found %s';
+                    $data  = array(
+                        $expectedIndent,
+                        $foundIndent,
+                    );
+
+                    $phpcs->addError($error, $i, 'Alignment', $data);
+                }
+
+                $next = $phpcs->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, $i, null, true);
+                if ($next !== $close) {
+                    if (isset(PHP_CodeSniffer_Tokens::$booleanOperators[$tokens[$next]['code']]) === false) {
+                        $error = 'Each line in a multi-line IF statement must begin with a boolean operator';
+                        $phpcs->addError($error, $i, 'StartWithBoolean');
+                    }
+                }//end if
+
+                $prevLine = $tokens[$i]['line'];
+            }//end if
+
+            if ($tokens[$i]['code'] === T_STRING) {
+                $next = (int) $phpcs->findNext(T_WHITESPACE, ($i + 1), null, true);
+                if ($tokens[$next]['code'] === T_OPEN_PARENTHESIS) {
+                    // This is a function call, so skip to the end as they
+                    // have their own indentation rules.
+                    $i        = (int) $tokens[$next]['parenthesis_closer'];
+                    $prevLine = $tokens[$i]['line'];
+                    continue;
+                }
+            }
+        }//end for
+    }
 
 }//end class

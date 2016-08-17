@@ -67,6 +67,7 @@ class WonderNetworkStandardTest extends PHPUnit_Framework_TestCase {
 				continue;
 			}
 			$tests[] = [
+				basename($file),
 				$file,
 				$standard,
 				"$file.expect"
@@ -85,7 +86,7 @@ class WonderNetworkStandardTest extends PHPUnit_Framework_TestCase {
 	 * @param boolean $expectedOutputFile The path of expected file.
 	 * @return void
 	 */
-	public function testFile( $file, $standard, $expectedOutputFile ) {
+	public function testFile( $name, $file, $standard, $expectedOutputFile ) {
 		$outputStr = $this->prepareOutput( $this->helper->runPhpCs( $file, $standard ) );
 		$expect = $this->prepareOutput( file_get_contents( $expectedOutputFile ) );
 		$this->assertEquals( $expect, $outputStr );

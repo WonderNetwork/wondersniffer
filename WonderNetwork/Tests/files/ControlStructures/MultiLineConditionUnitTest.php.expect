@@ -1,13 +1,31 @@
+  13 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 8 spaces but found 4
+  13 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
+  32 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 8 spaces but found 4
+  32 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
+  38 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 8 spaces but found 4
+  38 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
   40 | ERROR | Each line in a multi-line IF statement must begin with
      |       | a boolean operator
   46 | ERROR | Multi-line IF statement not indented correctly;
-     |       | expected 4 spaces but found 3
+     |       | expected 8 spaces but found 3
+  46 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
   47 | ERROR | Multi-line IF statement not indented correctly;
      |       | expected 4 spaces but found 6
   48 | ERROR | Multi-line IF statement not indented correctly;
      |       | expected 4 spaces but found 3
   49 | ERROR | Multi-line IF statement not indented correctly;
      |       | expected 4 spaces but found 3
+  55 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 8 spaces but found 4
+  55 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
   56 | ERROR | Multi-line IF statement not indented correctly;
      |       | expected 0 spaces but found 1
   78 | ERROR | Multi-line IF statement not indented correctly;
@@ -17,6 +35,10 @@
   86 | ERROR | Multi-line IF statement not indented correctly;
      |       | expected 4 spaces but found 0
   86 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
+  98 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 8 spaces but found 4
+  98 | ERROR | Closing parenthesis of a multi-line IF statement must
      |       | be on a new line
  124 | ERROR | Each line in a multi-line IF statement must begin with
      |       | a boolean operator
