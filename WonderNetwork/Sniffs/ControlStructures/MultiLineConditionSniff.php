@@ -1,31 +1,18 @@
 <?php
-/**
- * PEAR_Sniffs_ControlStructures_MultiLineConditionSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
 
 /**
- * PEAR_Sniffs_ControlStructures_MultiLineConditionSniff.
+ * WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff.
  *
  * Ensure multi-line IF conditions are defined correctly.
  *
  * @category  PHP
- * @package   PHP_CodeSniffer
+ * @package   wondersniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
+ * @author    Gemma Anible <gemma@wonderproxy.com>
  * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: @package_version@
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeSniffer_Sniff
+class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeSniffer_Sniff
 {
 
     /**
@@ -33,10 +20,7 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = ['PHP'];
 
     /**
      * The number of spaces code should be indented.
@@ -53,10 +37,7 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
      */
     public function register()
     {
-        return array(
-                T_IF,
-                T_ELSEIF,
-               );
+        return [T_IF, T_ELSEIF, T_WHILE];
 
     }//end register()
 
@@ -91,14 +72,7 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
 
         if ($spaceAfterOpen !== 0) {
             $error = 'First condition of a multi-line IF statement must directly follow the opening parenthesis';
-            $fix   = $phpcsFile->addFixableError($error, ($openBracket + 1), 'SpacingAfterOpenBrace');
-            if ($fix === true) {
-                if ($spaceAfterOpen === 'newline') {
-                    $phpcsFile->fixer->replaceToken(($openBracket + 1), '');
-                } else {
-                    $phpcsFile->fixer->replaceToken(($openBracket + 1), '');
-                }
-            }
+            $phpcsFile->addError($error, ($openBracket + 1), 'SpacingAfterOpenBrace');
         }
 
         // We need to work out how far indented the if statement
@@ -126,21 +100,7 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
                     if ($next !== $closeBracket) {
                         // Closing bracket is on the same line as a condition.
                         $error = 'Closing parenthesis of a multi-line IF statement must be on a new line';
-                        $fix   = $phpcsFile->addFixableError($error, $closeBracket, 'CloseBracketNewLine');
-                        if ($fix === true) {
-                            // Account for a comment at the end of the line.
-                            $next = $phpcsFile->findNext(T_WHITESPACE, ($closeBracket + 1), null, true);
-                            if ($tokens[$next]['code'] !== T_COMMENT) {
-                                $phpcsFile->fixer->addNewlineBefore($closeBracket);
-                            } else {
-                                $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
-                                $phpcsFile->fixer->beginChangeset();
-                                $phpcsFile->fixer->replaceToken($closeBracket, '');
-                                $phpcsFile->fixer->addContentBefore($next, ')');
-                                $phpcsFile->fixer->endChangeset();
-                            }
-                        }
-
+                        $phpcsFile->addError($error, $closeBracket, 'CloseBracketNewLine');
                         $expectedIndent = ($statementIndent + $this->indent);
                     } else {
                         // Closing brace needs to be indented to the same level
@@ -170,35 +130,14 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
                               $foundIndent,
                              );
 
-                    $fix = $phpcsFile->addFixableError($error, $i, 'Alignment', $data);
-                    if ($fix === true) {
-                        $spaces = str_repeat(' ', $expectedIndent);
-                        if ($foundIndent === 0) {
-                            $phpcsFile->fixer->addContentBefore($i, $spaces);
-                        } else {
-                            $phpcsFile->fixer->replaceToken($i, $spaces);
-                        }
-                    }
+                    $phpcsFile->addError($error, $i, 'Alignment', $data);
                 }
 
                 $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, $i, null, true);
                 if ($next !== $closeBracket) {
                     if (isset(PHP_CodeSniffer_Tokens::$booleanOperators[$tokens[$next]['code']]) === false) {
                         $error = 'Each line in a multi-line IF statement must begin with a boolean operator';
-                        $fix   = $phpcsFile->addFixableError($error, $i, 'StartWithBoolean');
-                        if ($fix === true) {
-                            $prev = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($i - 1), $openBracket, true);
-                            if (isset(PHP_CodeSniffer_Tokens::$booleanOperators[$tokens[$prev]['code']]) === true) {
-                                $phpcsFile->fixer->beginChangeset();
-                                $phpcsFile->fixer->replaceToken($prev, '');
-                                $phpcsFile->fixer->addContentBefore($next, $tokens[$prev]['content'].' ');
-                                $phpcsFile->fixer->endChangeset();
-                            } else {
-                                for ($x = ($prev + 1); $x < $next; $x++) {
-                                    $phpcsFile->fixer->replaceToken($x, '');
-                                }
-                            }
-                        }
+                        $phpcsFile->addError($error, $i, 'StartWithBoolean');
                     }
                 }//end if
 
@@ -259,14 +198,7 @@ class PEAR_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeS
             $error .= '%s spaces';
         }
 
-        $fix = $phpcsFile->addFixableError($error, ($closeBracket + 1), $code, $data);
-        if ($fix === true) {
-            if ($length === 0) {
-                $phpcsFile->fixer->addContent($closeBracket, ' ');
-            } else {
-                $phpcsFile->fixer->replaceToken(($closeBracket + 1), ' ');
-            }
-        }
+        $phpcsFile->addError($error, ($closeBracket + 1), $code, $data);
 
     }//end process()
 

@@ -1,0 +1,26 @@
+  40 | ERROR | Each line in a multi-line IF statement must begin with
+     |       | a boolean operator
+  46 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 3
+  47 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 6
+  48 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 3
+  49 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 3
+  56 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 0 spaces but found 1
+  78 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 3
+  79 | ERROR | Each line in a multi-line IF statement must begin with
+     |       | a boolean operator
+  86 | ERROR | Multi-line IF statement not indented correctly;
+     |       | expected 4 spaces but found 0
+  86 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
+ 124 | ERROR | Each line in a multi-line IF statement must begin with
+     |       | a boolean operator
+ 124 | ERROR | Closing parenthesis of a multi-line IF statement must
+     |       | be on a new line
+ 129 | ERROR | Each line in a multi-line IF statement must begin with
+     |       | a boolean operator

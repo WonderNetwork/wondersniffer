@@ -92,7 +92,7 @@
             doStuff();
         }
     -->
-    <rule ref="PEAR.ControlStructures.MultiLineCondition"/>
+    <!-- <rule ref="PEAR.ControlStructures.MultiLineCondition"/> -->
 
     <!-- Forbids whitespace in typecasts, e.g. ( int ) -->
     <rule ref="Squiz.WhiteSpace.CastSpacing"/>

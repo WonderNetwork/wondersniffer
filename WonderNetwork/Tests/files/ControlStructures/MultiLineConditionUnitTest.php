@@ -2,31 +2,36 @@
    <h3>some text</h3>
 <?php }
 
+if ($condition1
+    && $condition2
+    && $condition3
+) {
+    echo 'bar';
+}
+
 if (($condition1
     || $condition2)
     && $condition3
     && $condition4
     && $condition5
 ) {
+    echo 'bar';
 }
 
 if (($condition1 || $condition2) && $condition3 && $condition4 && $condition5) {
+    echo 'bar';
 }
 
 if (($condition1 || $condition2)
     && $condition3
 ) {
-}
-
-if (
-    ($condition1 || $condition2)
-    && $condition3
-) {
+    echo 'bar';
 }
 
 if (($condition1
     || $condition2)
 ) {
+    echo 'bar';
 }
 
 if (($condition1
@@ -34,6 +39,7 @@ if (($condition1
     && $condition3 &&
     $condition4
 ) {
+    echo 'bar';
 }
 
 if (($condition1
@@ -42,88 +48,59 @@ if (($condition1
    && $condition4
    && $condition5
 ) {
-}
-
-if (($condition1
-    || $condition2)
-)  {
+    echo 'bar';
 }
 
 if (($condition1
     || $condition2)
  ) {
-}
-
-if (
-    (
-    $condition1
-    || $condition2
-    )
-    && $condition3
-) {
-}
-
-
-if (   $condition1
-    || $condition2
-    || $condition3
-) {
+    echo 'bar';
 }
 
 if ($condition1
     || $condition2
     || $condition3
 ) {
-} else if ($condition1
+    echo 'bar';
+} elseif ($condition1
     || $condition2
     || $condition3
 ) {
+    echo 'bar';
 }
 
 if ($condition1
     || $condition2
     || $condition3
 ) {
-} elseif (
-    $condition1
+    echo 'bar';
+} elseif ($condition1
    || $condition2 &&
     $condition3
 ) {
+    echo 'bar';
 }
 
 if ($condition1
     || $condition2
 || $condition3) {
+    echo 'bar';
 }
 
 if ($condition1
     || $condition2 || $condition3
-){
+) {
+    echo 'bar';
 }
-
-if ($condition1)
-    echo 'bar';
-
-if ($condition1
-    || $condition2
-|| $condition3)
-    echo 'bar';
-
-
-if ($condition1
-    || $condition2 || $condition3
-)
-    echo 'bar';
 
 if (!empty($post)
     && (!empty($context['header'])
     xor stripos($context['header'], 'Content-Type'))
-) { 
-// ...
+) {
+    echo 'bar';
 }
 
-if ($foo)
-{
+if ($foo) {
     echo 'bar';
 }
 
@@ -132,9 +109,11 @@ if ($foo)
 // call takes precedence.
 if (array_key_exists($key, $value)
     && array_key_exists(
-        $key, $value2
+        $key,
+        $value2
     )
 ) {
+    echo 'bar';
 }
 
 if (true) :
@@ -142,16 +121,13 @@ if (true) :
 endif;
 
 if ($IPP->errorCode() == 401 || // comment
-    $IPP->errorCode() == 3200)  /* long comment
-                                   here
-                                 */
-{
+    $IPP->errorCode() == 3200) {
     return false;
 }
 
 if ($IPP->errorCode() == 401 || // comment
-    $IPP->errorCode() == 3200)  // long comment here
-{
+    $IPP->errorCode() == 3200   // long comment here
+) {
     return false;
 }
 
@@ -161,14 +137,3 @@ if ($IPP->errorCode() == 401
 ) {
     return false;
 }
-
-?>
-<?php foreach ($blah as $boo) : ?>
-    <?php if ($foo): ?>
-        <?php
-            if ($bar) {
-            } else {
-            }
-        ?>
-    <?php endif; ?>
-<?php endforeach; ?>

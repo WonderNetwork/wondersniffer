@@ -20,10 +20,14 @@
  *
  * @author Addshore
  * Modifications
- *  - Rename appropriatly
+ *  - Rename appropriately
  *  - Adapt $this->helper->runPhpCs call to pass second parameter $standard
+ *
+ * @author WonderNetwork
+ * Modifications
+ *  - Remove fixers and helper
  */
-class MediaWikiStandardTest extends PHPUnit_Framework_TestCase {
+class WonderNetworkStandardTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @var TestHelper
@@ -36,8 +40,7 @@ class MediaWikiStandardTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		parent::setUp();
 		if ( empty( $this->helper ) ) {
-			include_once __DIR__ . '/MediaWikiTestHelper.php';
-			$this->helper = new MediaWikiTestHelper();
+			$this->helper = new TestHelper();
 		}
 	}
 
@@ -87,36 +90,6 @@ class MediaWikiStandardTest extends PHPUnit_Framework_TestCase {
 		$expect = $this->prepareOutput( file_get_contents( $expectedOutputFile ) );
 		$this->assertEquals( $expect, $outputStr );
 	}
-	/**
-	 * @return array $tests The array of test.
-	 */
-	public static function testFixProvider() {
-		$tests = self::testProvider();
-		foreach ( array_keys( $tests ) as $idx ) {
-			$fixed = $tests[$idx][0] . ".fixed";
-			if ( file_exists( $fixed ) ) {
-				$tests[$idx][2] = $fixed;
-			} else {
-				// no fixes should be applied, assert fixed
-				// file matches original
-				$tests[$idx][2] = $tests[$idx][0];
-			}
-		}
-		return $tests;
-	}
-
-	/**
-	 * @dataProvider testFixProvider
-	 * @param string $file The path of file.
-	 * @param string $standard The standard string.
-	 * @param string $fixedFile The path of fixed file.
-	 * @return void
-	 */
-	public function testFix( $file, $standard, $fixedFile ) {
-		$outputStr = $this->helper->runPhpCbf( $file, $standard );
-		$expect = file_get_contents( $fixedFile );
-		$this->assertEquals( $expect, $outputStr );
-	}
 
 	/**
 	 * strip down the output to only the warnings
@@ -126,9 +99,11 @@ class MediaWikiStandardTest extends PHPUnit_Framework_TestCase {
 	 */
 	private function prepareOutput( $outputStr ) {
 		if ( $outputStr ) {
-			$outputLines = explode( "\n", $outputStr );
-			$outputLines = $this->stripTwoDashLines( $outputLines, true );
-			$outputLines = $this->stripTwoDashLines( $outputLines, false );
+			$outputLines = array_filter(explode( "\n", $outputStr ), function ($line) {
+				return preg_match('/^\s+\d*\s+\|\s+(ERROR)?\s+\| .*$/', $line);
+			});
+//			$outputLines = $this->stripTwoDashLines( $outputLines, true );
+//			$outputLines = $this->stripTwoDashLines( $outputLines, false );
 			$outputStr = implode( "\n", $outputLines );
 		}
 

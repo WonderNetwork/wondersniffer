@@ -9,8 +9,8 @@
 		 verbose="false"
 		 bootstrap="./phpunit.bootstrap.php">
 	<testsuites>
-		<testsuite name="phpcs/MediaWiki">
-			<file>./MediaWiki/Tests/MediaWikiStandardTest.php</file>
+		<testsuite name="phpcs/WonderNetwork">
+			<file>./WonderNetwork/Tests/WonderNetworkStandardTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
