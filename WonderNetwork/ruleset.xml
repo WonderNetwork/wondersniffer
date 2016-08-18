@@ -81,7 +81,7 @@
     <!-- Forbids Perl-style comments, e.g. # this is a comment -->
     <rule ref="PEAR.Commenting.InlineComment"/>
 
-    <!-- Requires multi-line if conditions to be indented correctly. Also
+    <!-- Require multi-line if conditions to be indented correctly. Also
          requires each conditional line to start with a boolean operator, to
          improve readability:
 
@@ -91,8 +91,23 @@
         ) {
             doStuff();
         }
+
+        We customized PEAR.ControlStructures.MultiLineCondition to indent
+        nested conditionals properly, so instead of this:
+
+        if (this
+            && (that
+            || stuff) // this indentation is visually confusing
+        ) {}
+
+        we do this:
+
+        if (this
+            && (that
+                || stuff // way more sensible
+            )
+        ) {}
     -->
-    <!-- <rule ref="PEAR.ControlStructures.MultiLineCondition"/> -->
 
     <!-- Forbids whitespace in typecasts, e.g. ( int ) -->
     <rule ref="Squiz.WhiteSpace.CastSpacing"/>
