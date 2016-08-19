@@ -7,21 +7,12 @@ _(The astute may notice that the code in this repo doesn't conform to our own st
 
 ## How to make your code look like our code
 
-1. Add `wondersniffer` to your `composer.json`:
+1. Add `wondersniffer` to your [Composer](https://getcomposer.org/) packages:
 
-  ```{json}
-  {
-    "repositories": [
-      {
-        "url": "https://github.com/WonderNetwork/wondersniffer",
-        "type": "git"
-      }
-    ],
-    "require-dev": {
-      "wondernetwork/wondersniffer": "dev-master"
-    }
-  }
   ```
+  $ composer require --dev wondernetwork/wondersniffer
+  ```
+  
 2. Update `composer`:
 
   ```
