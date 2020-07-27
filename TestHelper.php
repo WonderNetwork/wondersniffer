@@ -18,58 +18,57 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
- * @author Addshore
+ * @author  Addshore
  * Modifications
  *  - runPhpCs takes a second parameter $standard to override the default
  */
 
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\LocalFile;
+use PHP_CodeSniffer\Reporter;
+use PHP_CodeSniffer\Runner;
+
 class TestHelper {
 
-	protected $rootDir;
+    protected $rootDir;
+    protected $dirName;
+    protected $phpcs;
 
-	protected $dirName;
+    public function __construct() {
+        $this->rootDir = dirname(__DIR__);
+        $this->dirName = basename($this->rootDir);
 
-	protected $phpcs;
+        $this->phpcs = new Runner();
+        $this->phpcs->config = new Config();
+        $this->phpcs->config->encoding = 'utf-8';
+        $this->phpcs->config->verbosity = 0;
+        $this->phpcs->init();
+    }
 
-	/**
-	 * @return void
-	 */
-	public function __construct() {
-		$this->rootDir = dirname( __DIR__ );
-		$this->dirName = basename( $this->rootDir );
-		$this->phpcs = new PHP_CodeSniffer_CLI();
-	}
+    /**
+     * Run PHPCS on a file.
+     *
+     * @param string $file     To run.
+     * @param string $standard To run against.
+     *
+     * @return string $result The output from phpcs.
+     */
+    public function runPhpCs($file, $standard = '') {
+        if (empty($standard)) {
+            $standard = $this->rootDir.'/ruleset.xml';
+        }
 
-	/**
-	 * Run PHPCS on a file.
-	 *
-	 * @param string $file To run.
-	 * @param string $standard To run against.
-	 * @return string $result The output from phpcs.
-	 */
-	public function runPhpCs( $file, $standard = '' ) {
-		if ( empty( $standard ) ) {
-			$standard = $this->rootDir . '/ruleset.xml';
-		}
-		$defaults = $this->phpcs->getDefaults();
+        $this->phpcs->config->standards = [$standard];
+        $this->phpcs->reporter = new Reporter($this->phpcs->config);
+        $file = new LocalFile($file, $this->phpcs->ruleset, $this->phpcs->config);
 
-		if (
-			defined( 'PHP_CodeSniffer::VERSION' ) &&
-			version_compare( PHP_CodeSniffer::VERSION, '1.5.0' ) != -1
-		) {
-			$standard = [ $standard ];
-		}
-		$options = [
-				'encoding' => 'utf-8',
-				'files' => [ $file ],
-				'standard' => $standard,
-			] + $defaults;
+        ob_start();
+        $this->phpcs->processFile($file);
+        $this->phpcs->reporter->printReports();
+        $result = ob_get_contents();
+        ob_end_clean();
 
-		ob_start();
-		$this->phpcs->process( $options );
-		$result = ob_get_contents();
-		ob_end_clean();
-		return $result;
-	}
+        return $result;
+    }
 
 }
