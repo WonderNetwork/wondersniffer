@@ -1,5 +1,11 @@
 <?php
 
+namespace WonderNetwork\Sniffs\ControlStructures;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
 /**
  * WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff.
  *
@@ -12,7 +18,7 @@
  * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements PHP_CodeSniffer_Sniff
+class MultiLineConditionSniff implements Sniff
 {
 
     /**
@@ -25,7 +31,7 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
     /**
      * The number of spaces code should be indented.
      *
-     * @var int
+     * @var integer
      */
     public $indent = 4;
 
@@ -45,13 +51,13 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param File    $phpcsFile The file being scanned.
+     * @param integer $stackPtr  The position of the current token in the stack
+     *                           passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -59,8 +65,8 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
             return;
         }
 
-        $openBracket    = $tokens[$stackPtr]['parenthesis_opener'];
-        $closeBracket   = $tokens[$stackPtr]['parenthesis_closer'];
+        $openBracket  = $tokens[$stackPtr]['parenthesis_opener'];
+        $closeBracket = $tokens[$stackPtr]['parenthesis_closer'];
 
         // We need to work out how far indented the if statement
         // itself is, so we can work out how far to indent conditions.
@@ -125,12 +131,12 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
     }//end process()
 
     /**
-     * @param PHP_CodeSniffer_File $phpcs
-     * @param array                $tokens
-     * @param int                  $open
-     * @param int                  $indent
+     * @param File  $phpcs
+     * @param array $tokens
+     * @param int   $open
+     * @param int   $indent
      */
-    public function processParens(PHP_CodeSniffer_File $phpcs, array $tokens, $open, $indent) {
+    public function processParens(File $phpcs, array $tokens, $open, $indent) {
         $stackPtr = $open;
         $close = (int) $tokens[$stackPtr]['parenthesis_closer'];
 
@@ -197,9 +203,9 @@ class WonderNetwork_Sniffs_ControlStructures_MultiLineConditionSniff implements 
                     $phpcs->addError($error, $i, 'Alignment', $data);
                 }
 
-                $next = $phpcs->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, $i, null, true);
+                $next = $phpcs->findNext(Tokens::$emptyTokens, $i, null, true);
                 if ($next !== $close) {
-                    if (isset(PHP_CodeSniffer_Tokens::$booleanOperators[$tokens[$next]['code']]) === false) {
+                    if (isset(Tokens::$booleanOperators[$tokens[$next]['code']]) === false) {
                         $error = 'Each line in a multi-line IF statement must begin with a boolean operator';
                         $phpcs->addError($error, $i, 'StartWithBoolean');
                     }
