@@ -23,7 +23,7 @@
           empty catch statements either, but we'll accept them if there's a
           comment explaining why the statement is empty. We handle that case
           later. -->
-     <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH" />
+     <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch" />
  </rule>
 
     <!-- Require functions braces be on the same line and multi-line arguments
