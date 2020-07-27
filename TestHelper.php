@@ -26,6 +26,7 @@
 use PHP_CodeSniffer\Config;
 use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Reporter;
+use PHP_CodeSniffer\Ruleset;
 use PHP_CodeSniffer\Runner;
 
 class TestHelper {
@@ -42,6 +43,7 @@ class TestHelper {
         $this->phpcs->config = new Config();
         $this->phpcs->config->encoding = 'utf-8';
         $this->phpcs->config->verbosity = 0;
+        $this->phpcs->config->reportWidth = 70;
         $this->phpcs->init();
     }
 
@@ -59,6 +61,7 @@ class TestHelper {
         }
 
         $this->phpcs->config->standards = [$standard];
+        $this->phpcs->ruleset = new Ruleset($this->phpcs->config);
         $this->phpcs->reporter = new Reporter($this->phpcs->config);
         $file = new LocalFile($file, $this->phpcs->ruleset, $this->phpcs->config);
 
