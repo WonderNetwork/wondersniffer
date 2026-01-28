@@ -68,10 +68,7 @@ class TestHelper {
         ob_start();
         $this->phpcs->processFile($file);
         $this->phpcs->reporter->printReports();
-        $result = ob_get_contents();
-        ob_end_clean();
-
-        return $result;
+        return ob_get_clean();
     }
 
 }

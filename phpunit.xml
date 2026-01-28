@@ -4,8 +4,6 @@
 		 convertErrorsToExceptions="true"
 		 convertNoticesToExceptions="true"
 		 convertWarningsToExceptions="true"
-		 mapTestClassNameToCoveredClassName="false"
-		 strict="false"
 		 verbose="false"
 		 bootstrap="./phpunit.bootstrap.php">
 	<testsuites>
