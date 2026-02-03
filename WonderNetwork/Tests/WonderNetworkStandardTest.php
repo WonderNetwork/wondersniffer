@@ -1,4 +1,7 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * This file was copied from CakePhps codesniffer tests before being modified
  * File: http://git.io/vkirb
@@ -27,21 +30,18 @@
  * Modifications
  *  - Remove fixers and helper
  */
-class WonderNetworkStandardTest extends PHPUnit_Framework_TestCase {
+class WonderNetworkStandardTest extends TestCase {
 
 	/**
 	 * @var TestHelper
 	 */
-	private $helper;
+	private TestHelper $helper;
 
 	/**
 	 * @return void
 	 */
-	public function setUp() {
-		parent::setUp();
-		if ( empty( $this->helper ) ) {
-			$this->helper = new TestHelper();
-		}
+	public function setUp(): void {
+        $this->helper = new TestHelper();
 	}
 
 	/**
@@ -51,81 +51,21 @@ class WonderNetworkStandardTest extends PHPUnit_Framework_TestCase {
 	 * file against an expected output.
 	 * @return  array $tests The test string[].
 	 */
-	public static function testProvider() {
-		$tests = [];
-
-		$standard = dirname( __DIR__ );
-		$directoryIterator = new RecursiveDirectoryIterator( __DIR__ . '/files' );
-		$iterator = new RecursiveIteratorIterator( $directoryIterator );
-		foreach ( $iterator as $dir ) {
-			if ( $dir->isDir() ) {
-				continue;
-			}
-
-			$file = $dir->getPathname();
-			if ( substr( $file, -4 ) !== '.php' ) {
-				continue;
-			}
-			$tests[] = [
-				basename($file),
-				$file,
-				$standard,
-				"$file.expect"
-			];
-		}
-		return $tests;
+	public static function dataProvider(): array {
+        return array_map(
+            static fn (string $filename) => [$filename],
+            glob(__DIR__.'/files/**/*.php'),
+        );
 	}
 
-	/**
-	 * _testFile
-	 *
-	 * @dataProvider testProvider
-	 *
-	 * @param string $file The path string of file.
-	 * @param string $standard The standard string.
-	 * @param boolean $expectedOutputFile The path of expected file.
-	 * @return void
-	 */
-	public function testFile( $name, $file, $standard, $expectedOutputFile ) {
-		$outputStr = $this->prepareOutput( $this->helper->runPhpCs( $file, $standard ) );
-		$expect = $this->prepareOutput( file_get_contents( $expectedOutputFile ) );
-		$this->assertEquals( $expect, $outputStr );
+    /**
+     * @dataProvider dataProvider
+     */
+	public function testFile( string $file ): void {
+        $standard = 'WonderNetwork';
+        $expectedOutputFile = sprintf('%s.expect', $file);
+        $outputStr = $this->helper->runPhpCs( $file, $standard );
+        $expect = file_get_contents( $expectedOutputFile );
+		self::assertEquals( $expect, $outputStr );
 	}
-
-	/**
-	 * strip down the output to only the warnings
-	 *
-	 * @param string $outputStr PHPCS output.
-	 * @return string $outputStr PHPCS output.
-	 */
-	private function prepareOutput( $outputStr ) {
-		if ( $outputStr ) {
-			$outputLines = array_filter(explode( "\n", $outputStr ), function ($line) {
-				return preg_match('/^\s+\d*\s+\|\s+(ERROR)?\s+\| .*$/', $line);
-			});
-//			$outputLines = $this->stripTwoDashLines( $outputLines, true );
-//			$outputLines = $this->stripTwoDashLines( $outputLines, false );
-			$outputStr = implode( "\n", $outputLines );
-		}
-
-		return $outputStr;
-	}
-
-	/**
-	 * @param string[] $lines The array of lines.
-	 * @param boolean $front When true strip from the front of array. Otherwise the end.
-	 * @return string[] $lines The processed array of lines.
-	 */
-	private function stripTwoDashLines( array $lines, $front = true ) {
-		$dashLines = 0;
-		while ( $lines && $dashLines < 2 ) {
-			$line = $front ? array_shift( $lines ) : array_pop( $lines );
-			if ( strlen( $line ) > 0 && $line[0] === '-' ) {
-				$dashLines++;
-			}
-		}
-
-		return $lines;
-	}
-
 }
