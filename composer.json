@@ -1,7 +1,7 @@
 {
     "name": "wondernetwork/wondersniffer",
     "description": "PHP Coding Standards for WonderNetwork",
-    "type": "library",
+    "type": "phpcodesniffer-standard",
     "keywords": ["wondernetwork", "codesniffer"],
     "homepage": "https://github.com/WonderNetwork/wondersniffer",
     "license": "GPL-2.0+",
